@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -42,6 +42,24 @@ function App() {
   const countCompletedTasks = (taskList) => {
     return taskList.reduce((total, task) => task.completed ? total + 1 : total, 0);
   };
+
+  useEffect(() => {
+    const resetDailyTasks = () => {
+      const currentTime = new Date();
+      const resetTime = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() + 1, 0, 0, 0); // Północ następnego dnia
+      const timeUntilReset = resetTime - currentTime;
+      
+      setTimeout(() => {
+        setTasks(tasks.map(task => task.category === 'Dzienne' ? {...task, completed: false} : task));
+      }, timeUntilReset);
+    };
+
+    const intervalId = setInterval(resetDailyTasks, 60000); // Sprawdzanie co minutę
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [tasks]);
 
   const dailyTasks = tasks.filter(task => task.category === 'Dzienne');
   const oneTimeTasks = tasks.filter(task => task.category === 'Jednorazowe');
