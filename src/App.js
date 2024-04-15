@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+//import 'antd/dist/antd.css'; // Importuje arkusz stylów Ant Design - działało bez, nie jestem pewna dlaczego 
+import { Typography } from 'antd'; // Importuje komponent Typography z Ant Design
+
+
+//*** PRZEPISANE NA TYPESCRIPT
+//import TaskForm from './components/TaskForm.js';
+import TaskForm from './components/TaskForm.tsx';
+//import TaskColumns from './components/TaskColumns.js';
+import TaskColumns from './components/TaskColumns.tsx';
+//import TotalCompleted from './components/TotalCompleted.js';
+import TotalCompleted from './components/TotalCompleted.tsx';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -54,7 +65,7 @@ function App() {
       }, timeUntilReset);
     };
 
-    const intervalId = setInterval(resetDailyTasks, 60000); // Sprawdzanie co minutę
+    const intervalId = setInterval(resetDailyTasks, 60000); 
 
     return () => {
       clearInterval(intervalId);
@@ -67,67 +78,23 @@ function App() {
 
   return (
     <div className="App">
-      <h1>ToDo</h1>
-      <div className="add-task">
-        <input
-          type="text"
-          value={taskInput}
-          onChange={(e) => setTaskInput(e.target.value)}
-          placeholder="Wpisz zadanie..."
-        />
-        <select onChange={(e) => setCategory(e.target.value)}>
-          <option value="Dzienne">Dzienne</option>
-          <option value="Jednorazowe">Jednorazowe</option>
-        </select>
-        <button onClick={toggleImportance} className={isImportant ? 'important' : ''}>
-          {isImportant ? 'Ważne' : 'Zwykłe'}
-        </button>
-        <button onClick={addTask}>Dodaj Zadanie</button>
-      </div>
-      <div className="task-columns">
-        <div className="task-column">
-          <h2>Codzienne</h2>
-            <p className="completed-count">Zrobione: {countCompletedTasks(dailyTasks)}</p>
-          <div className="tasks">
-            {dailyTasks.map(task => (
-              <div key={task.id} className={`task ${task.completed ? 'completed' : ''} ${task.important ? 'important' : ''}`}>
-                <span>{task.text}</span>
-                <div>
-                  <input
-                    type="checkbox"
-                    checked={task.completed}
-                    onChange={() => toggleCompletion(task.id)}
-                  />
-                  <button onClick={() => deleteTask(task.id)}>Usuń</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="task-column">
-          <h2>Jednorazowe</h2>
-          <p className="completed-count">Zrobione: {countCompletedTasks(oneTimeTasks)}</p>
-          <div className="tasks">
-            {oneTimeTasks.map(task => (
-              <div key={task.id} className={`task ${task.completed ? 'completed' : ''} ${task.important ? 'important' : ''}`}>
-                <span>{task.text}</span>
-                <div>
-                  <input
-                    type="checkbox"
-                    checked={task.completed}
-                    onChange={() => toggleCompletion(task.id)}
-                  />
-                  <button onClick={() => deleteTask(task.id)}>Usuń</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="total-completed">
-        <h2>Zrobione Zadania</h2>
-        <p>{completedTasks.length}</p>
-      </div>
+      <Typography.Title level={1}>To Do List</Typography.Title> {/*Title z Ant Design */}
+      <TaskForm
+        taskInput={taskInput}
+        setTaskInput={setTaskInput}
+        category={category}
+        setCategory={setCategory}
+        isImportant={isImportant}
+        toggleImportance={toggleImportance}
+        addTask={addTask}
+      />
+      <TaskColumns
+        dailyTasks={dailyTasks}
+        oneTimeTasks={oneTimeTasks}
+        deleteTask={deleteTask}
+        toggleCompletion={toggleCompletion}
+      />
+      <TotalCompleted completedTasks={completedTasks} />
     </div>
   );
 }
